@@ -6,7 +6,6 @@ actionlib-msgs==4.2.3
 aiofiles==23.1.0
 ament-index-python==1.4.0
 ament-package==0.14.0
-ament-uncrustify==0.12.6
 ament-xmllint==0.12.6
 angles==1.15.0
 anyio==3.7.0
