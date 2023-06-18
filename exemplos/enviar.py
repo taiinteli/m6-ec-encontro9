@@ -74,6 +74,8 @@ def main(args=None):
   image_subscriber.destroy_node()
   # Shutdown the ROS client library for Python
   rclpy.shutdown()
+
+  
 if __name__ == '__main__':
   main()
 
