@@ -1,49 +1,44 @@
-# Basic ROS 2 program to subscribe to real-time streaming
-# video from your built-in webcam
-# Author:
-# - Addison Sears-Collins
-# - https://automaticaddison.com
-# Import the necessary libraries
-import rclpy # Python library for ROS 2
-from rclpy.node import Node # Handles the creation of nodes
-from sensor_msgs.msg import Image # Image is the message type
-from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
-import cv2 # OpenCV library
+import rclpy # Biblioteca Python para ROS 2
+from rclpy.node import Node # Lida com a criação dos nós
+from sensor_msgs.msg import Image # Image é o tipo de mensagem
+from cv_bridge import CvBridge # Pacote para converter entre Imagens ROS e OpenCV
+import cv2 # Biblioteca OpenCV
 import httpx
 import requests
-# from ultralytics import YOLO
-# model = YOLO("best.pt")
+
 class ImageSubscriber(Node):
   """
-  Create an ImageSubscriber class, which is a subclass of the Node class.
+  Cria uma classe ImageSubscriber, que é uma subclasse da classe Node.
   """
   def __init__(self):
     """
-    Class constructor to set up the node
+    Construtor da classe para configurar o nó
     """
-    # Initiate the Node class's constructor and give it a name
+    # Inicializa o construtor da classe Node e dá um nome a ele
     super().__init__('image_subscriber')
-    # Create the subscriber. This subscriber will receive an Image
-    # from the video_frames topic. The queue size is 10 messages.
+    # Cria o assinante. Esse assinante receberá uma Imagem
+    # do tópico 'video_frames'. O tamanho da fila é de 10 mensagens.
     self.subscription = self.create_subscription(
       Image,
       'video_frames',
       self.listener_callback,
       10)
-    self.subscription # prevent unused variable warning
-    # Used to convert between ROS and OpenCV images
+    self.subscription # evita um aviso de variável não utilizada
+    # Usado para converter imagens entre ROS e OpenCV
     self.br = CvBridge()
+  
   def listener_callback(self, data):
     """
-    Callback function.
+    Função de retorno de chamada.
     """
-    # Display the message on the console
-    self.get_logger().info('Receiving video frame')
-    # Convert ROS Image message to OpenCV image
+    # Exibe a mensagem no console
+    self.get_logger().info('Recebendo frame de vídeo')
+    # Converte a mensagem de Imagem ROS para imagem OpenCV
     current_frame = self.br.imgmsg_to_cv2(data)
+    # Realiza operações no frame, como detecção de objetos
     # results = model(current_frame)
     # annotated_frame = results[0].plot()
-    # Convert the frame to a byte array
+    # Converte o frame para um array de bytes
     _, img_encoded = cv2.imencode('.png', current_frame)
     frame_data = img_encoded.tobytes()
     import requests
@@ -52,30 +47,31 @@ class ImageSubscriber(Node):
       ('content',('lala.png',frame_data,'image/png'))
     ]
     response = requests.request("POST", url, files=files)
-    # Check the response status code
+    # Verifica o código de status da resposta
     if response.status_code == 200:
-        print('Frame sent successfully!')
+        print('Frame enviado com sucesso!')
     else:
-        print('Failed to send frame. Status code:', response.status_code)
+        print('Falha ao enviar o frame. Código de status:', response.status_code)
+    # Exibe o frame na janela "Camera"
     cv2.imshow("Camera", current_frame)
     if cv2.waitKey(25) & 0xFF == ord('q'):
       cv2.destroyAllWindows()
       return
+
 def main(args=None):
-  # Initialize the rclpy library
+  # Inicializa a biblioteca rclpy
   rclpy.init(args=args)
-  # Create the node
+  # Cria o nó
   image_subscriber = ImageSubscriber()
-  # Spin the node so the callback function is called.
+  # Faz o nó rodar para que a função de retorno de chamada seja chamada.
   rclpy.spin(image_subscriber)
-  # Destroy the node explicitly
-  # (optional - otherwise it will be done automatically
-  # when the garbage collector destroys the node object)
+  # Destroi explicitamente o nó
+  # (opcional - caso contrário, será feito automaticamente
+  # quando o coletor de lixo destruir o objeto do nó)
   image_subscriber.destroy_node()
-  # Shutdown the ROS client library for Python
+  # Encerra a biblioteca cliente ROS para Python
   rclpy.shutdown()
 
-  
 if __name__ == '__main__':
   main()
 

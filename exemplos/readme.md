@@ -24,3 +24,4 @@ Postman
 <br>
 O Postman é uma poderosa ferramenta de desenvolvimento de API que facilita a criação, teste e documentação de APIs. Ele fornece uma interface clean que permite ter a possibilidade de enviar solicitações HTTP para APIs e receber as respostas correspondentes. O Postman suporta diferentes métodos HTTP, como GET, POST, PUT e DELETE, e permite a configuração de parâmetros, cabeçalhos e corpos de solicitação personalizados. No projeto em questão ele foi utilizado para fazer o teste de funcinamento. 
 
+Link do vídeo de funcionamento: https://youtu.be/fg-dDK_pS-w 
